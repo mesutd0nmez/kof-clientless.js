@@ -2,6 +2,7 @@
   "name": "kof-server.js",
   "version": "1.0.0",
   "main": "index.js",
+  "repository": "https://github.com/trkyshorty/kof-server.js.git",
   "author": "Türkay Tanrıkulu <trky.shorty@gmail.com>",
   "license": "MIT",
   "scripts": {
