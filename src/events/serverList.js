@@ -126,6 +126,7 @@ class ServerList extends Event {
 
   async send() {
     const packet = new ByteBuffer()
+
     packet.writeUnsignedByte(this.options.header)
 
     if (this.client.options.platform == Platform.USKO) {

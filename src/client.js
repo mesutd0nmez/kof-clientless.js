@@ -115,6 +115,7 @@ class Client extends EventEmitter {
       }
     })
 
+    //this.send.emit(PacketHeader.WIZ_KICKOUT)
     this.send.emit(PacketHeader.WIZ_VERSION_CHECK)
   }
 
