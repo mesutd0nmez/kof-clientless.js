@@ -1,7 +1,7 @@
 import PacketHeader from '../core/enums/packetHeader.js'
+import Platform from '../core/enums/platform.js'
 import { ByteBuffer } from '../core/utils/byteBuffer.js'
 import Event from '../core/event.js'
-import { Platform } from '../client.js'
 
 class Login extends Event {
   constructor(client) {
@@ -41,7 +41,7 @@ class Login extends Event {
       packet.writeString('4b310467-fb9b-9133-b485df2a6d96b576', true)
     }
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
   }
 }
 

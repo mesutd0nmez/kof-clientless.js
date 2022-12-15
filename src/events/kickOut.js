@@ -1,4 +1,5 @@
 import PacketHeader from '../core/enums/packetHeader.js'
+import Platform from '../core/enums/platform.js'
 import { ByteBuffer } from '../core/utils/byteBuffer.js'
 import Event from '../core/event.js'
 
@@ -13,17 +14,20 @@ class KickOut extends Event {
     console.info('Kick Out Recv: ' + packet.toHex())
   }
 
-  async send() {
+  async send(crc) {
     const packet = new ByteBuffer()
 
     packet.writeUnsignedByte(this.options.header)
-    packet.writeString('xzbit3333', true)
+    packet.writeString(this.client.account.username, true)
 
-    // TODO: Unknown for usko
-    packet.writeUnsignedShort(0)
-    packet.writeUnsignedShort(0)
+    if (
+      this.client.options.platform == Platform.CNKO ||
+      this.client.options.platform == Platform.USKO
+    ) {
+      packet.writeUnsignedInt(crc)
+    }
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
   }
 }
 

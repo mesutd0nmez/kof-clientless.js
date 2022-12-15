@@ -3,13 +3,7 @@ import path from 'path'
 import EventEmitter from 'events'
 import Socket from './core/socket.js'
 import PacketHeader from './core/enums/packetHeader.js'
-
-const Platform = {
-  TEST: 0,
-  CNKO: 1,
-  JPKO: 2,
-  USKO: 3,
-}
+import Platform from './core/enums/platform.js'
 
 class Client extends EventEmitter {
   constructor(options) {
@@ -19,17 +13,19 @@ class Client extends EventEmitter {
     this.serverList = new Set()
     this.characterList = []
     this.selectedCharacterIndex = 0
-    this.socket = null
     this.myself = null
     this.npcMap = new Map()
     this.playerMap = new Map()
     this.startTime = 0
-    this.speedHackCheckInterval = null
+    this.speedHackCheckInterval = 0
     this.gameState = 0
     this.nation = 0
 
     this.recv = new EventEmitter()
     this.send = new EventEmitter()
+
+    this.loginSocket = null
+    this.gameSocket = null
   }
 
   async buildEvents() {
@@ -39,7 +35,7 @@ class Client extends EventEmitter {
       .sync(path.join('./src/events', '*.js').replace(/\\/g, '/'))
       .forEach(async (file) => {
         promises.push(
-          new Promise(function (resolve) {
+          new Promise((resolve) => {
             resolve(import(`../${file}`))
           })
         )
@@ -61,18 +57,14 @@ class Client extends EventEmitter {
   }
 
   async createLoginSocket() {
-    if (this.socket) {
-      this.destroySocket()
-    }
-
-    this.socket = new Socket()
-    this.socket.setKeepAlive(true)
-    this.socket.connect(this.options.loginPort, this.options.loginHost)
-    this.socket.recvEvent = this.recv
+    this.loginSocket = new Socket()
+    this.loginSocket.setKeepAlive(true)
+    this.loginSocket.connect(this.options.loginPort, this.options.loginHost)
+    this.loginSocket.recvEvent = this.recv
 
     const client = this
 
-    this.socket.on('error', function (err) {
+    this.loginSocket.on('error', (err) => {
       console.info(err.message)
 
       if (client.options.reconnect) {
@@ -86,47 +78,93 @@ class Client extends EventEmitter {
       }, 3000)
     })
 
-    this.send.emit(PacketHeader.WIZ_CRYPTION)
+    this.loginSocket.on('end', () => {
+      console.info(`${client.account.username} disconnected from login server`)
+
+      if (client.options.reconnect) {
+        console.info(`${client.account.username} reconnecting in 3 seconds`)
+      }
+
+      client.clear()
+
+      setTimeout(() => {
+        if (client.options.reconnect) {
+          client.createLoginSocket()
+        }
+      }, 3000)
+    })
+
+    this.loginSocket.on('connect', () => {
+      this.send.emit(PacketHeader.WIZ_CRYPTION)
+    })
   }
 
-  async createGameSocket(host, port = 15001) {
-    if (this.socket) {
-      this.destroySocket()
-    }
+  async destroyLoginSocket() {
+    this.loginSocket.destroy()
+  }
 
+  async createGameSocket(host, port = 15001, kickOutSession = false) {
     this.options.gameHost = host
+    this.options.gamePort = port
 
-    if (port != 15001) {
-      this.options.gamePort = port
-    }
-
-    this.socket = new Socket()
-    this.socket.setKeepAlive(true)
-    this.socket.connect(this.options.gamePort, this.options.gameHost)
-    this.socket.recvEvent = this.recv
+    this.gameSocket = new Socket()
+    this.gameSocket.setKeepAlive(true)
+    this.gameSocket.connect(this.options.gamePort, this.options.gameHost)
+    this.gameSocket.recvEvent = this.recv
 
     const client = this
 
-    this.socket.on('error', function (err) {
+    this.gameSocket.on('error', (err) => {
       console.info(err.message)
 
       if (client.options.reconnect) {
-        this.createLoginSocket()
+        console.info('Reconnecting in 3 seconds')
       }
+
+      setTimeout(() => {
+        if (kickOutSession == false && client.options.reconnect) {
+          client.createLoginSocket()
+        }
+      }, 3000)
     })
 
-    //this.send.emit(PacketHeader.WIZ_KICKOUT)
-    this.send.emit(PacketHeader.WIZ_VERSION_CHECK)
+    this.gameSocket.on('end', () => {
+      console.info(`${client.account.username} disconnected from game server`)
+
+      if (client.options.reconnect) {
+        console.info(`${client.account.username} reconnecting in 3 seconds`)
+      }
+
+      client.clear()
+
+      setTimeout(() => {
+        if (kickOutSession == false && client.options.reconnect) {
+          client.createLoginSocket()
+        }
+      }, 3000)
+    })
+
+    this.gameSocket.on('connect', () => {
+      if (!kickOutSession) {
+        this.send.emit(PacketHeader.WIZ_VERSION_CHECK)
+      }
+    })
+  }
+
+  async destroyGameSocket() {
+    this.gameSocket.destroy()
   }
 
   async clear() {
+    this.serverList.clear()
+    this.characterList = []
+    this.selectedCharacterIndex = 0
+    this.myself = null
+    this.npcMap.clear()
+    this.playerMap.clear()
     this.gameState = 0
+    this.nation = 0
     clearInterval(this.speedHackCheckInterval)
-  }
-
-  async destroySocket() {
-    this.clear()
-    this.socket.destroy()
   }
 
   async start(username, password) {
@@ -156,10 +194,6 @@ class Client extends EventEmitter {
     this.nation = nation
     this.send.emit(PacketHeader.WIZ_SEL_NATION, this.nation)
   }
-
-  async sendPacket(packet) {
-    this.socket.emit('send', packet)
-  }
 }
 
-export { Client, Platform, PacketHeader }
+export { Client, PacketHeader, Platform }

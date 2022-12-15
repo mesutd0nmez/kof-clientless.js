@@ -49,7 +49,7 @@ class SelectCharacter extends Event {
     packet.writeByte(selectedCharacter.zone)
     packet.writeUnsignedShort(0)
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
   }
 }
 

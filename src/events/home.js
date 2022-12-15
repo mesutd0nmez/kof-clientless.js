@@ -16,7 +16,7 @@ class Home extends Event {
 
     packet.writeUnsignedByte(this.options.header.WIZ_HOME)
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
   }
 }
 

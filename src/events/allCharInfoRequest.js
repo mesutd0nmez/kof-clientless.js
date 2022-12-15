@@ -1,7 +1,7 @@
 import PacketHeader from '../core/enums/packetHeader.js'
+import Platform from '../core/enums/platform.js'
 import { ByteBuffer } from '../core/utils/byteBuffer.js'
 import Event from '../core/event.js'
-import { Platform } from '../client.js'
 
 class AllCharInfoRequest extends Event {
   constructor(client) {
@@ -76,7 +76,7 @@ class AllCharInfoRequest extends Event {
     packet.writeUnsignedByte(this.options.header)
     packet.writeByte(1)
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
   }
 }
 

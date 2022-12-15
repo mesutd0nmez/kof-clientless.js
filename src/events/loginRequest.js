@@ -1,7 +1,7 @@
 import PacketHeader from '../core/enums/packetHeader.js'
+import Platform from '../core/enums/platform.js'
 import { ByteBuffer } from '../core/utils/byteBuffer.js'
 import Event from '../core/event.js'
-import { Platform } from '../client.js'
 
 class LoginRequest extends Event {
   constructor(client) {
@@ -11,25 +11,58 @@ class LoginRequest extends Event {
   }
 
   async recv(packet) {
-    if (this.client.options.platform != Platform.JPKO)
+    if (this.client.options.platform != Platform.JPKO) {
       packet.readUnsignedShort()
+    }
 
     const result = packet.readByte()
 
-    if (result == 1) {
-      const premiumTime = packet.readShort()
+    switch (result) {
+      case 1: // Success
+        {
+          const premiumTime = packet.readShort()
 
-      const isDoubleByte =
-        this.client.options.platform != Platform.CNKO &&
-        this.client.options.platform != Platform.JPKO
+          const isDoubleByte =
+            this.client.options.platform != Platform.CNKO &&
+            this.client.options.platform != Platform.JPKO
 
-      const accountId = packet.readString(isDoubleByte)
+          const accountId = packet.readString(isDoubleByte)
 
-      console.info(`Login ${accountId} success! Premium time: ${premiumTime}`)
+          console.info(
+            `Login ${accountId} success! Premium time: ${premiumTime}`
+          )
 
-      this.client.send.emit(PacketHeader.WIZ_SERVER_LIST)
-    } else {
-      console.error(`Login failed! Result: ${result}`)
+          this.client.send.emit(PacketHeader.WIZ_SERVER_LIST)
+        }
+        break
+      case 5: // Already Online
+        {
+          const serverIp = packet.readString(true)
+
+          if (
+            this.client.options.platform == Platform.CNKO ||
+            this.client.options.platform == Platform.USKO
+          ) {
+            const serverPort = packet.readShort()
+            const crc = packet.readUnsignedInt()
+
+            this.client.emit(
+              'userAlreadyOnline',
+              serverIp.trim(),
+              serverPort,
+              crc
+            )
+          } else {
+            this.client.emit('userAlreadyOnline', serverIp.trim(), 15001)
+          }
+        }
+        break
+
+      default:
+        {
+          console.error(`Login failed! Result: ${result}`)
+        }
+        break
     }
   }
 
@@ -43,7 +76,7 @@ class LoginRequest extends Event {
     packet.writeInt(0)
     packet.writeByte(0)
 
-    this.client.socket.emit('send', packet)
+    this.client.loginSocket.emit('send', packet)
   }
 }
 

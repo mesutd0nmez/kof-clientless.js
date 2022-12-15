@@ -1,4 +1,4 @@
-import { Client, Platform } from '../src/client.js'
+import { Client, Platform, PacketHeader } from '../src/client.js'
 import PasswordHash from '../src/core/utils/passwordHash.js'
 import inquirer from 'inquirer'
 
@@ -14,6 +14,24 @@ const client = new Client({
 
 client.start(process.env.TEST_USERNAME, PasswordHash(process.env.TEST_PASSWORD))
 
+client.on('userAlreadyOnline', (serverIp, serverPort, crc) => {
+  console.info(`${client.account.username} is already online, kicking out!`)
+
+  client.createGameSocket(serverIp, serverPort, true)
+  client.send.emit(PacketHeader.WIZ_KICKOUT, crc)
+
+  console.info(
+    `${client.account.username} is kicked out, reconnecting in 20 seconds!`
+  )
+  setTimeout(() => {
+    client.send.emit(
+      PacketHeader.WIZ_LOGIN_REQUEST,
+      client.account.username,
+      client.account.password
+    )
+  }, 20000)
+})
+
 client.on('serverList', (servers) => {
   inquirer
     .prompt({
@@ -24,6 +42,8 @@ client.on('serverList', (servers) => {
     })
     .then((answer) => {
       const server = Array.from(servers).find((e) => e.name === answer.value)
+
+      client.destroyLoginSocket()
       client.createGameSocket(server.ip, server.port)
     })
     .catch((error) => {

@@ -26,7 +26,7 @@ class SelectNation extends Event {
 
     packet.writeUnsignedByte(nation)
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
   }
 }
 

@@ -67,7 +67,7 @@ class Captcha extends Event {
       packet.writeString(code, true)
     }
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
   }
 }
 

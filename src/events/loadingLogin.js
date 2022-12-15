@@ -39,7 +39,7 @@ class LoadingLogin extends Event {
     // Start Loading
     packet.writeUnsignedByte(1)
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
   }
 }
 

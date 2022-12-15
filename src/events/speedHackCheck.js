@@ -15,8 +15,8 @@ class SpeedHack extends Event {
     const packet = new ByteBuffer()
 
     if (init == 1) {
-      clearInterval(this.speedHackCheckInterval)
-      this.speedHackCheckInterval = setInterval(() => {
+      clearInterval(this.client.speedHackCheckInterval)
+      this.client.speedHackCheckInterval = setInterval(() => {
         this.client.send.emit(PacketHeader.WIZ_SPEEDHACK_CHECK)
       }, 10000)
 
@@ -32,7 +32,7 @@ class SpeedHack extends Event {
     packet.writeFloat(fTime)
     packet.writeUnsignedByte(0)
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
   }
 }
 

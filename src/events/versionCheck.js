@@ -1,7 +1,7 @@
 import PacketHeader from '../core/enums/packetHeader.js'
+import Platform from '../core/enums/platform.js'
 import { ByteBuffer } from '../core/utils/byteBuffer.js'
 import Event from '../core/event.js'
-import { Platform } from '../client.js'
 
 class VersionCheck extends Event {
   constructor(client) {
@@ -24,14 +24,14 @@ class VersionCheck extends Event {
     if (this.client.options.aes) {
       const key = packet.readString()
 
-      this.client.socket.aesPublicKey = Buffer.alloc(16)
-      this.client.socket.aesPublicKey.write(key)
+      this.client.gameSocket.aesPublicKey = Buffer.alloc(16)
+      this.client.gameSocket.aesPublicKey.write(key)
 
       console.info(`Game Version: ${version}`)
       console.info(`Game Cryption Key (AES): ${key}`)
     } else {
       const key = packet.readUnsignedBigInt()
-      this.client.socket.jvCryptionKey = key
+      this.client.gameSocket.jvCryptionKey = key
 
       console.info(`Game Version: ${version}`)
       console.info(`Game Cryption Key (JV): ${key}`)
@@ -49,7 +49,7 @@ class VersionCheck extends Event {
 
     packet.writeUnsignedByte(this.options.header)
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
   }
 }
 

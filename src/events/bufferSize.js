@@ -9,9 +9,7 @@ class BufferSize extends Event {
     })
   }
 
-  async recv(packet) {
-    console.info('Buffer size: ' + packet.toHex())
-  }
+  async recv() {}
 
   async send() {
     const packet = new ByteBuffer()
@@ -19,7 +17,7 @@ class BufferSize extends Event {
     packet.writeUnsignedByte(this.options.header)
     packet.writeUnsignedInt(16386)
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
   }
 }
 

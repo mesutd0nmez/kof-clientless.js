@@ -1,7 +1,7 @@
 import PacketHeader from '../core/enums/packetHeader.js'
+import Platform from '../core/enums/platform.js'
 import { ByteBuffer } from '../core/utils/byteBuffer.js'
 import Event from '../core/event.js'
-import { Platform } from '../client.js'
 
 class ServerList extends Event {
   constructor(client) {
@@ -134,7 +134,7 @@ class ServerList extends Event {
       packet.writeUnsignedByte(0)
     }
 
-    this.client.socket.emit('send', packet)
+    this.client.loginSocket.emit('send', packet)
   }
 }
 

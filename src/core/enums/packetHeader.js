@@ -1,4 +1,4 @@
-const Packet = {
+const PacketHeader = {
   WIZ_LOGIN: 0x01,
   WIZ_SEL_CHAR: 0x04,
   WIZ_SEL_NATION: 0x05,
@@ -31,4 +31,4 @@ const Packet = {
   WIZ_SERVER_LIST: 0xf5,
 }
 
-export default Packet
+export default PacketHeader

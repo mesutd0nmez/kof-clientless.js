@@ -23,7 +23,7 @@ class GameStart extends Event {
     packet.writeUnsignedShort(state)
     packet.writeString(selectedCharacter.name)
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
 
     this.client.gameState = state
   }

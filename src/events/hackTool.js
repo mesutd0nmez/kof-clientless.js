@@ -42,7 +42,7 @@ class HackTool extends Event {
         break
     }
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
   }
 }
 

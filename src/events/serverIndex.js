@@ -18,7 +18,7 @@ class ServerIndex extends Event {
 
     packet.writeUnsignedByte(this.options.header)
 
-    this.client.socket.emit('send', packet)
+    this.client.gameSocket.emit('send', packet)
   }
 }
 

@@ -14,7 +14,7 @@ class Cryption extends Event {
 
     console.info(`Login Cryption Key (JV): ${key}`)
 
-    this.client.socket.jvCryptionKey = key
+    this.client.loginSocket.jvCryptionKey = key
 
     this.client.send.emit(
       PacketHeader.WIZ_LOGIN_REQUEST,
@@ -28,7 +28,7 @@ class Cryption extends Event {
 
     packet.writeUnsignedByte(this.options.header)
 
-    this.client.socket.emit('send', packet)
+    this.client.loginSocket.emit('send', packet)
   }
 }
 
