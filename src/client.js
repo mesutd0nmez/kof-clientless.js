@@ -32,7 +32,7 @@ class Client extends EventEmitter {
     const promises = []
 
     glob
-      .sync(path.join('./src/events', '*.js').replace(/\\/g, '/'))
+      .sync(path.join('./src/events/client', '*.js').replace(/\\/g, '/'))
       .forEach(async (file) => {
         promises.push(
           new Promise((resolve) => {
