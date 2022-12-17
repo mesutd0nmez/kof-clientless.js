@@ -11,6 +11,10 @@ class GameStart extends Event {
 
   async recv() {
     this.client.send.emit(PacketHeader.WIZ_GAMESTART, 2)
+
+    /* setInterval(() => {
+      this.client.send.emit(PacketHeader.WIZ_XIGNCODE)
+    }, 10000)*/
   }
 
   async send(state) {
