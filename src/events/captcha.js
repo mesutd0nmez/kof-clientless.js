@@ -1,8 +1,8 @@
-import PacketHeader from '../../core/enums/packetHeader.js'
-import Event from '../../core/event.js'
+import PacketHeader from '../core/enums/packetHeader.js'
+import Event from '../core/event.js'
 import fs from 'fs'
-import createBitmapFile from '../../core/utils/bitmap.js'
-import { ByteBuffer } from '../../core/utils/byteBuffer.js'
+import createBitmapFile from '../core/utils/bitmap.js'
+import { ByteBuffer } from '../core/utils/byteBuffer.js'
 
 class Captcha extends Event {
   constructor(client) {

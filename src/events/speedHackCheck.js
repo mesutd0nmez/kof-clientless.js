@@ -1,6 +1,6 @@
-import PacketHeader from '../../core/enums/packetHeader.js'
-import { ByteBuffer } from '../../core/utils/byteBuffer.js'
-import Event from '../../core/event.js'
+import PacketHeader from '../core/enums/packetHeader.js'
+import { ByteBuffer } from '../core/utils/byteBuffer.js'
+import Event from '../core/event.js'
 
 class SpeedHack extends Event {
   constructor(client) {

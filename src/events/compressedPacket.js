@@ -1,7 +1,7 @@
-import PacketHeader from '../../core/enums/packetHeader.js'
-import { ByteBuffer } from '../../core/utils/byteBuffer.js'
+import PacketHeader from '../core/enums/packetHeader.js'
+import { ByteBuffer } from '../core/utils/byteBuffer.js'
 import lzfjs from 'lzfjs'
-import Event from '../../core/event.js'
+import Event from '../core/event.js'
 
 class CompressedPacket extends Event {
   constructor(client) {
