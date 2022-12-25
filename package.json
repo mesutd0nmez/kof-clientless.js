@@ -1,0 +1,54 @@
+{
+  "name": "kof-server.js",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/trkyshorty/kof-server.js.git",
+  "author": "Türkay Tanrıkulu <trky.shorty@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "pm2 start ecosystem.config.json --no-daemon",
+    "dev": "cross-env NODE_ENV=development node -r dotenv/config ./index.js",
+    "dev:cnko": "cross-env NODE_ENV=development node -r dotenv/config ./tests/cnko.js",
+    "dev:jpko": "cross-env NODE_ENV=development node -r dotenv/config ./tests/jpko.js",
+    "dev:usko": "cross-env NODE_ENV=development node -r dotenv/config ./tests/usko.js",
+    "dev:kof": "cross-env NODE_ENV=development node -r dotenv/config ./tests/kof.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "prettier": "prettier --check ./src/**/*.js",
+    "prettier:fix": "prettier --write ./src/**/*.js"
+  },
+  "dependencies": {
+    "byte-buffer": "https://github.com/trkyshorty/byte-buffer#build",
+    "cross-env": "^7.0.3",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.3",
+    "glob": "^8.0.3",
+    "http": "^0.0.1-security",
+    "iconv-lite": "^0.6.3",
+    "long": "^5.2.1",
+    "lzfjs": "^1.0.1",
+    "net": "^1.0.2",
+    "path": "^0.12.7",
+    "socket.io": "^4.5.4",
+    "socket.io-client": "^4.5.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.29.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "inquirer": "^9.1.4",
+    "prettier": "^2.8.1"
+  },
+  "type": "module",
+  "plugins": [
+    "import"
+  ],
+  "rules": {
+    "import/no-unresolved": 2,
+    "import/no-commonjs": 2,
+    "import/extensions": [
+      2,
+      "ignorePackages"
+    ]
+  }
+}
